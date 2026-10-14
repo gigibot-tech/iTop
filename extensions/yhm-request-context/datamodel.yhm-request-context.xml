@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.3">
+  <classes>
+    <class id="Ticket" _delta="must_exist">
+      <fields>
+        <field id="yhm_paste" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_paste</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+    </class>
+    <class id="Incident" _delta="must_exist">
+      <presentation>
+        <details>
+          <items>
+            <item id="fieldset:Ticket:paste" _delta="define">
+              <rank>200</rank>
+              <items>
+                <item id="yhm_paste">
+                  <rank>10</rank>
+                </item>
+              </items>
+            </item>
+          </items>
+        </details>
+      </presentation>
+    </class>
+    <class id="UserRequest" _delta="must_exist">
+      <fields>
+        <field id="yhm_assumption" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_assumption</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="yhm_assumption_check" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_assumption_check</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="yhm_value" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_value</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="yhm_feature" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_feature</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="yhm_decision" xsi:type="AttributeEnum" _delta="define">
+          <sql>yhm_decision</sql>
+          <values>
+            <value id="need_value">
+              <code>need_value</code>
+              <rank>10</rank>
+            </value>
+            <value id="do_it">
+              <code>do_it</code>
+              <rank>20</rank>
+            </value>
+            <value id="already">
+              <code>already</code>
+              <rank>30</rank>
+            </value>
+            <value id="not_pilot">
+              <code>not_pilot</code>
+              <rank>40</rank>
+            </value>
+          </values>
+          <default_value>need_value</default_value>
+          <is_null_allowed>true</is_null_allowed>
+          <sort_type>rank</sort_type>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="fieldset:Ticket:paste" _delta="define">
+              <rank>200</rank>
+              <items>
+                <item id="yhm_paste">
+                  <rank>10</rank>
+                </item>
+              </items>
+            </item>
+            <item id="col:col1">
+              <items>
+                <item id="fieldset:UserRequest:business" _delta="define">
+                  <rank>15</rank>
+                  <items>
+                    <item id="yhm_assumption">
+                      <rank>10</rank>
+                    </item>
+                    <item id="yhm_assumption_check">
+                      <rank>20</rank>
+                    </item>
+                    <item id="yhm_value">
+                      <rank>30</rank>
+                    </item>
+                    <item id="yhm_feature">
+                      <rank>40</rank>
+                    </item>
+                    <item id="yhm_decision">
+                      <rank>50</rank>
+                    </item>
+                  </items>
+                </item>
+              </items>
+            </item>
+          </items>
+        </details>
+        <list>
+          <items>
+            <item id="yhm_decision" _delta="define">
+              <rank>80</rank>
+            </item>
+            <item id="yhm_feature" _delta="define">
+              <rank>90</rank>
+            </item>
+          </items>
+        </list>
+      </presentation>
+      <lifecycle _delta="must_exist">
+        <states>
+          <state id="new" _delta="must_exist">
+            <flags>
+              <attribute id="contacts_list" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="workorders_list" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="related_request_list" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="related_incident_list" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="parent_request_id" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="parent_incident_id" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="parent_problem_id" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="parent_change_id" _delta="define">
+                <hidden/>
+              </attribute>
+              <attribute id="functionalcis_list" _delta="define">
+                <hidden/>
+              </attribute>
+            </flags>
+          </state>
+        </states>
+      </lifecycle>
+      <methods>
+        <method id="PrefillCreationForm" _delta="define">
+          <static>false</static>
+          <access>public</access>
+          <type>Overload-DBObject</type>
+          <code><![CDATA[public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+    $this->FillYourHealthMatchContext();
+}]]></code>
+        </method>
+        <method id="FillYourHealthMatchContext" _delta="define">
+          <static>false</static>
+          <access>protected</access>
+          <type>Custom</type>
+          <code><![CDATA[protected function FillYourHealthMatchContext()
+{
+    if (((int) $this->Get('org_id')) === 0) {
+        $org = MetaModel::GetObjectByName('Organization', 'YourHealthMatch', false);
+        if ($org !== null) {
+            $this->Set('org_id', $org->GetKey());
+        }
+    }
+    if (((int) $this->Get('caller_id')) === 0) {
+        $search = new DBObjectSearch('Person');
+        $search->AddCondition('first_name', 'Business');
+        $caller = (new DBObjectSet($search))->Fetch();
+        if ($caller !== null) {
+            $this->Set('caller_id', $caller->GetKey());
+        }
+    }
+}]]></code>
+        </method>
+      </methods>
+    </class>
+    <class id="Service" _delta="must_exist">
+      <fields>
+        <field id="yhm_check_url" xsi:type="AttributeURL" _delta="define">
+          <sql>yhm_check_url</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+          <target>_blank</target>
+        </field>
+        <field id="yhm_check_state" xsi:type="AttributeEnum" _delta="define">
+          <sql>yhm_check_state</sql>
+          <values>
+            <value id="unknown">
+              <code>unknown</code>
+              <rank>10</rank>
+            </value>
+            <value id="ok">
+              <code>ok</code>
+              <rank>20</rank>
+            </value>
+            <value id="failed">
+              <code>failed</code>
+              <rank>30</rank>
+            </value>
+          </values>
+          <default_value>unknown</default_value>
+          <is_null_allowed>true</is_null_allowed>
+          <sort_type>rank</sort_type>
+        </field>
+        <field id="yhm_check_detail" xsi:type="AttributeText" _delta="define">
+          <sql>yhm_check_detail</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+        <field id="yhm_checked_at" xsi:type="AttributeDateTime" _delta="define">
+          <sql>yhm_checked_at</sql>
+          <default_value/>
+          <is_null_allowed>true</is_null_allowed>
+        </field>
+      </fields>
+      <presentation>
+        <details>
+          <items>
+            <item id="documents_list" _delta="delete"/>
+            <item id="contacts_list" _delta="delete"/>
+            <item id="customercontracts_list" _delta="delete"/>
+            <item id="providercontracts_list" _delta="delete"/>
+            <item id="functionalcis_list" _delta="delete"/>
+            <item id="servicesubcategories_list" _delta="delete"/>
+            <item id="yhm_check_url" _delta="define">
+              <rank>45</rank>
+            </item>
+            <item id="yhm_check_state" _delta="define">
+              <rank>46</rank>
+            </item>
+            <item id="yhm_check_detail" _delta="define">
+              <rank>47</rank>
+            </item>
+            <item id="yhm_checked_at" _delta="define">
+              <rank>48</rank>
+            </item>
+          </items>
+        </details>
+        <list>
+          <items>
+            <item id="yhm_check_state" _delta="define">
+              <rank>30</rank>
+            </item>
+          </items>
+        </list>
+      </presentation>
+      <methods>
+        <method id="PrefillCreationForm" _delta="define">
+          <static>false</static>
+          <access>public</access>
+          <type>Overload-DBObject</type>
+          <code><![CDATA[public function PrefillCreationForm(&$aContextParam)
+{
+    parent::PrefillCreationForm($aContextParam);
+    if (((int) $this->Get('org_id')) === 0) {
+        $org = MetaModel::GetObjectByName('Organization', 'YourHealthMatch', false);
+        if ($org !== null) {
+            $this->Set('org_id', $org->GetKey());
+        }
+    }
+}]]></code>
+        </method>
+      </methods>
+    </class>
+  </classes>
+</itop_design>

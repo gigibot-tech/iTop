@@ -39,6 +39,8 @@ tests/*/vendor/*
 !/extensions/.htaccess
 !/extensions/readme.txt
 !/extensions/web.config
+!/extensions/yhm-request-context/
+!/extensions/yhm-request-context/**
 
 # all logs but listing prevention
 /log/**
