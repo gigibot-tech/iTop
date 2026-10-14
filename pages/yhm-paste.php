@@ -4,9 +4,9 @@ require_once '../approot.inc.php';
 require_once APPROOT.'bootstrap.inc.php';
 require_once APPROOT.'application/startup.inc.php';
 require_once APPROOT.'application/loginwebpage.class.inc.php';
-$sPaste = APPROOT.'env-production/yhm-request-context/paste.inc.php';
+$sPaste = APPROOT.'extensions/yhm-request-context/paste.inc.php';
 if (!is_file($sPaste)) {
-	$sPaste = APPROOT.'extensions/yhm-request-context/paste.inc.php';
+	$sPaste = APPROOT.'env-production/yhm-request-context/paste.inc.php';
 }
 require_once $sPaste;
 
