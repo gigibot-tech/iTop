@@ -7,6 +7,9 @@ RUN apt-get update \
 		libpng-dev \
 		libzip-dev \
 		libicu-dev \
+		libxml2-dev \
+		pkg-config \
+		default-mysql-client \
 		unzip \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
 	&& docker-php-ext-install -j"$(nproc)" gd intl mysqli soap zip \
@@ -27,7 +30,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 COPY docker/railway-start.sh /usr/local/bin/railway-start.sh
 RUN chmod 755 /usr/local/bin/railway-start.sh \
-	&& mkdir -p conf/production data log env-production \
+	&& mkdir -p /opt/itop-seed-conf conf/production data log env-production \
+	&& cp -a conf/. /opt/itop-seed-conf/ \
 	&& chown -R www-data:www-data conf data log env-production
 
 EXPOSE 8080

@@ -8,6 +8,12 @@ sed -i "s/<VirtualHost \\*:80>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-avai
 
 mkdir -p conf/production data log env-production
 
+for file in index.php .htaccess web.config; do
+	if [ ! -e "conf/$file" ] && [ -e "/opt/itop-seed-conf/$file" ]; then
+		cp -a "/opt/itop-seed-conf/$file" "conf/$file"
+	fi
+done
+
 if [ -n "${ITOP_CONFIG_B64:-}" ]; then
 	printf '%s' "$ITOP_CONFIG_B64" | base64 -d > conf/production/config-itop.php
 	php docker/apply-railway-config.php
