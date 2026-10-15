@@ -29,4 +29,7 @@ if [ ! -f env-production/autoload.php ] && [ -f conf/production/config-itop.php 
 	chown -R www-data:www-data env-production data log conf
 fi
 
+a2dismod mpm_event mpm_worker >/dev/null 2>&1 || true
+a2enmod mpm_prefork >/dev/null 2>&1 || true
+
 exec apache2-foreground
