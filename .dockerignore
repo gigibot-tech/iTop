@@ -1,0 +1,10 @@
+.git
+.github
+.idea
+.doc
+tests
+log
+data
+env-*
+conf/production
+**/config-itop.php
