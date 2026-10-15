@@ -10,6 +10,10 @@ RUN apt-get update \
 		libxml2-dev \
 		pkg-config \
 		default-mysql-client \
+		nodejs \
+		npm \
+		git \
+		ca-certificates \
 		unzip \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
 	&& docker-php-ext-install -j"$(nproc)" gd intl mysqli soap zip \
@@ -28,6 +32,7 @@ RUN printf '%s\n' \
 
 WORKDIR /var/www/html
 COPY . /var/www/html
+RUN npm install --unsafe-perm
 COPY docker/railway-start.sh /usr/local/bin/railway-start.sh
 RUN chmod 755 /usr/local/bin/railway-start.sh \
 	&& mkdir -p /opt/itop-seed-conf conf/production data log env-production \
